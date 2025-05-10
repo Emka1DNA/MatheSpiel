@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>⚽️ Mathe-Spiel FC Basel ⚽️</title>
+    <style>
+    body {
+        background: url('stadion.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 10px;
+        backdrop-filter: brightness(60%);
+    }
+
+    h2, #timer, #ergebnis {
+        margin: 10px;
+        text-shadow: 1px 1px 3px black;
+    }
+
+    /* Spinner-Pfeile ausblenden */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    input {
+        border: none;
+        border-radius: 5px;
+        background-color: rgba(255,255,255,0.9);
+        color: black;
+        font-size: 18px;
+        padding: 5px;
+        width: 100px;
+        text-align: center;
+    }
+
+    button {
+        background-color: gold;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        padding: 10px 20px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+    button:hover {
+        background-color: yellow;
+    }
+
+    .correct {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .wrong {
+        background-color: #FF5252;
+        color: white;
+    }
+
+    #aufgaben div {
+        margin: 8px;
+        font-size: 18px;
+        text-shadow: 1px 1px 3px black;
+    }
+</style>
+</head>
+<body>
+    <h2>⚽️ Tore schießen für den FC Basel ⚽️</h2>
+    <div id="timer">⏱️ Spielzeit: 0:00</div>
+    <div id="aufgaben"></div>
+    <button id="auswertenBtn" onclick="auswerten()">🏁 Spiel abpfeifen!</button>
+    <button id="neuBtn" onclick="neuesSpiel()" style="display:none;">🔄 Neues Spiel</button>
+    <div id="ergebnis"></div>
+
+    <script>
+        let startTime, timerInterval;
+
+        function startStoppuhr() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                let zeit = Math.floor((Date.now() - startTime) / 1000);
+                let min = Math.floor(zeit / 60);
+                let sec = zeit % 60;
+                document.getElementById("timer").innerText = `⏱️ Spielzeit: ${min}:${sec < 10 ? '0' + sec : sec}`;
+            }, 1000);
+        }
+
+        function erstelleAufgaben() {
+            const container = document.getElementById('aufgaben');
+            container.innerHTML = '';
+            const operations = ['+', '-', '×', '÷'];
+
+            for (let i = 1; i <= 40; i++) {
+                let op = operations[Math.floor(Math.random() * operations.length)];
+                let num1, num2, result;
+
+                switch (op) {
+                    case '+':
+                        num1 = Math.floor(Math.random() * 500);
+                        num2 = Math.floor(Math.random() * 500);
+                        result = num1 + num2;
+                        break;
+                    case '-':
+                        num1 = Math.floor(Math.random() * 500) + 100;
+                        num2 = Math.floor(Math.random() * num1);
+                        result = num1 - num2;
+                        break;
+                    case '×':
+                        num1 = Math.floor(Math.random() * 20);
+                        num2 = Math.floor(Math.random() * 10);
+                        result = num1 * num2;
+                        break;
+                    case '÷':
+                        num2 = Math.floor(Math.random() * 9) + 1;
+                        result = Math.floor(Math.random() * 20);
+                        num1 = result * num2;
+                        break;
+                }
+
+                container.innerHTML += `<div>${i}. ${num1} ${op} ${num2} = 
+                    <input type="number" data-result="${result}"></div>`;
+            }
+            document.getElementById('ergebnis').innerHTML = '';
+            document.getElementById('auswertenBtn').style.display = 'inline-block';
+            document.getElementById('neuBtn').style.display = 'none';
+            startStoppuhr();
+        }
+
+        function auswerten() {
+            clearInterval(timerInterval);
+            const inputs = document.querySelectorAll('input');
+            let richtig = 0;
+
+            inputs.forEach(input => {
+                const userAntwort = parseInt(input.value);
+                const richtigeAntwort = parseInt(input.getAttribute('data-result'));
+
+                if (userAntwort === richtigeAntwort) {
+                    richtig++;
+                    input.classList.add('correct');
+                } else {
+                    input.classList.add('wrong');
+                    input.value += ` (✓${richtigeAntwort})`;
+                }
+                input.disabled = true;
+            });
+
+            const totalZeit = document.getElementById("timer").innerText;
+            document.getElementById('ergebnis').innerHTML = 
+                `<h3>🥅 Tore für den FC Basel: ${richtig} von 40!</h3>
+                 <h4>${totalZeit}</h4>`;
+
+            document.getElementById('auswertenBtn').style.display = 'none';
+            document.getElementById('neuBtn').style.display = 'inline-block';
+        }
+
+        function neuesSpiel() {
+            erstelleAufgaben();
+        }
+
+        // Erststart
+        erstelleAufgaben();
+    </script>
+</body>
+</html>
