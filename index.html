@@ -98,7 +98,7 @@
             container.innerHTML = '';
             const operations = ['+', '-', '×', '÷'];
 
-            for (let i = 1; i <= 40; i++) {
+            for (let i = 1; i <= 20; i++) {
                 let op = operations[Math.floor(Math.random() * operations.length)];
                 let num1, num2, result;
 
@@ -155,7 +155,7 @@
 
             const totalZeit = document.getElementById("timer").innerText;
             document.getElementById('ergebnis').innerHTML = 
-                `<h3>🥅 Tore für den FC Basel: ${richtig} von 40!</h3>
+                `<h3>🥅 Tore für den FC Basel: ${richtig} von 20!</h3>
                  <h4>${totalZeit}</h4>`;
 
             document.getElementById('auswertenBtn').style.display = 'none';
